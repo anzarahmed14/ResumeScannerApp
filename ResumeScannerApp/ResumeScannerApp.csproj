@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DocumentFormat.OpenXml" Version="3.3.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ResumeScannerApp.Config\ResumeScannerApp.Config.csproj" />
+    <ProjectReference Include="..\ResumeScannerApp.Interfaces\ResumeScannerApp.Interfaces.csproj" />
+    <ProjectReference Include="..\ResumeScannerApp.Services\ResumeScannerApp.Services.csproj" />
+  </ItemGroup>
+
+</Project>

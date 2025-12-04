@@ -1,0 +1,6 @@
+@ResumeScannerApp_HostAddress = http://localhost:5031
+
+GET {{ResumeScannerApp_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

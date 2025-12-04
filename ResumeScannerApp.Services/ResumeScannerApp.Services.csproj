@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DocumentFormat.OpenXml" Version="3.3.0" />
+    <PackageReference Include="PdfPig" Version="0.1.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ResumeScannerApp.Config\ResumeScannerApp.Config.csproj" />
+    <ProjectReference Include="..\ResumeScannerApp.Helpers\ResumeScannerApp.Helpers.csproj" />
+    <ProjectReference Include="..\ResumeScannerApp.Interfaces\ResumeScannerApp.Interfaces.csproj" />
+    <ProjectReference Include="..\ResumeScannerApp.Utilities\ResumeScannerApp.Utilities.csproj" />
+  </ItemGroup>
+
+</Project>
