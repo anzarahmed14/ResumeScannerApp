@@ -9,7 +9,7 @@ namespace ResumeScannerApp.Models
     public class ParsedResumeResult
     {
         public string FilePath { get; set; } = "";
-        //dsads
+       
         public ResumeDto Resume { get; set; } = new ResumeDto();
         public bool Success { get; set; }
         public string? ErrorMessage { get; set; }
