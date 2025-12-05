@@ -7,6 +7,7 @@ using ResumeScannerApp.Utilities;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace ResumeScannerApp.Controllers
 {
@@ -30,7 +31,7 @@ namespace ResumeScannerApp.Controllers
             _storage = storage;
             _openAiClient = openAiClient;
             _aiOptions = aiOptions;
-            _resumeFolder = config["ResumeFolder"] ?? Environment.GetEnvironmentVariable("RESUME_FOLDER") ?? @"D:\resume";
+            _resumeFolder = config["ResumeFolder"] ?? Environment.GetEnvironmentVariable("RESUME_FOLDER") ?? @"C:\resume";
 
             _storage.EnsureFolderExistsAsync(_resumeFolder).GetAwaiter().GetResult();
         }
@@ -46,12 +47,40 @@ namespace ResumeScannerApp.Controllers
         public async Task<IActionResult> Upload(IFormFile file, CancellationToken cancellationToken)
         {
             if (file == null || file.Length == 0) return BadRequest("No file uploaded.");
-            await _storage.SaveFileAsync(_resumeFolder, file.FileName, file.OpenReadStream(), cancellationToken);
-            var path = Path.Combine(_resumeFolder, Path.GetFileName(file.FileName));
+
+            var uniqueName = MakeUniqueFileName(file.FileName);
+
+            await _storage.SaveFileAsync(_resumeFolder, uniqueName, file.OpenReadStream(), cancellationToken);
+            var path = Path.Combine(_resumeFolder, Path.GetFileName(uniqueName));
             var parsed = await _parser.ParseFromFileAsync(path, cancellationToken);
             if (!parsed.Success) return StatusCode(500, parsed.ErrorMessage);
-            return CreatedAtAction(nameof(Upload), new { file = file.FileName }, parsed);
+            return CreatedAtAction(nameof(Upload), new { file = uniqueName }, parsed);
         }
+
+        private string MakeUniqueFileName(string fileName)
+        {
+            var extension = Path.GetExtension(fileName).ToLower();
+
+            var name = CleanFileName(
+                Path.GetFileNameWithoutExtension(fileName)
+            );
+
+            //var name = Path.GetFileNameWithoutExtension(fileName)
+            //                .ToLower()
+            //                .Replace(" ", "-");
+
+            var uniqueId = Guid.NewGuid().ToString("N");
+
+            return $"{name}-{uniqueId}{extension}";
+        }
+
+        string CleanFileName(string name)
+        {
+            name = Regex.Replace(name.ToLower(), @"[^a-z0-9\-]", "-");
+            name = Regex.Replace(name, @"-+", "-");
+            return name.Trim('-');
+        }
+
         [HttpPost("search")]
         public async Task<IActionResult> Search([FromBody] SearchRequest request, CancellationToken cancellationToken)
         {
@@ -294,6 +323,29 @@ namespace ResumeScannerApp.Controllers
             });
         }
 
+        [HttpGet("files")]
+        public async Task<ActionResult> GetFiles()
+        {
+            //await _storage.SaveFileAsync(_resumeFolder, file.FileName, file.OpenReadStream(), cancellationToken);
 
+            var results = await _storage.ListFilesAsync(_resumeFolder);
+            return Ok(results);
+        }
+
+
+        [HttpDelete("{fileName}")]
+        public async Task<IActionResult> Delete(string fileName)
+        {
+            var deleted = await _storage.DeleteFileIfExistsAsync(_resumeFolder, fileName);
+
+            if (!deleted)
+                return NotFound("File not found.");
+
+            return Ok(new
+            {
+                success = true,
+                message = "File deleted successfully."
+            });
+        }
     }
 }

@@ -11,7 +11,10 @@ namespace ResumeScannerApp.Services
     {
         public Task EnsureFolderExistsAsync(string folderPath)
         {
-            if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
             return Task.CompletedTask;
         }
 
@@ -27,8 +30,27 @@ namespace ResumeScannerApp.Services
         public Task<IEnumerable<string>> ListFilesAsync(string folderPath)
         {
             if (!Directory.Exists(folderPath)) return Task.FromResult(Enumerable.Empty<string>());
-            var files = Directory.GetFiles(folderPath);
+            var files = Directory.GetFiles(folderPath).Select(Path.GetFileName);
             return Task.FromResult((IEnumerable<string>)files);
         }
+
+        public async Task<bool> DeleteFileIfExistsAsync(string folderPath, string fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+                throw new ArgumentException("Filename is required.");
+
+            if (!Directory.Exists(folderPath))
+                return false;
+
+            var fullPath = Path.Combine(folderPath, fileName);
+
+            if (!File.Exists(fullPath))
+                return false;
+
+            await Task.Run(() => File.Delete(fullPath));
+
+            return true;
+        }
+
     }
 }
