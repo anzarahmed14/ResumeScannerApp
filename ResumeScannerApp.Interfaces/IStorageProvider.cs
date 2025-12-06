@@ -11,8 +11,8 @@ namespace ResumeScannerApp.Interfaces
     {
         Task EnsureFolderExistsAsync(string folderPath);
         Task SaveFileAsync(string folderPath, string fileName, Stream content, CancellationToken cancellationToken = default);
-        IEnumerable<string> ListFilesAsync(string folderPath);
-        IEnumerable<string> ListFileNames(string folderPath);
+        Task<IEnumerable<string>> ListFilesAsync(string folderPath);
+        Task<IEnumerable<string>> ListFileNames(string folderPath);
         Task<bool> DeleteFileIfExistsAsync(string folderPath, string fileName);
     }
 }

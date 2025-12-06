@@ -35,26 +35,21 @@ namespace ResumeScannerApp.Services
             return Directory.GetFiles(folderPath);
         }
 
-        public IEnumerable<string> ListFilesAsync(string folderPath)
-            => GetFiles(folderPath);
+        //public IEnumerable<string> ListFilesAsync(string folderPath)
+        //    => GetFiles(folderPath);
 
-        //public Task<IEnumerable<string>> ListFilesAsync(string folderPath)
-        //{
-        //    if (!Directory.Exists(folderPath)) return Task.FromResult(Enumerable.Empty<string>());
-        //    var files = Directory.GetFiles(folderPath).Select(Path.GetFileName);
-        //    return Task.FromResult((IEnumerable<string>)files);
-        //}
-
-        public IEnumerable<string> ListFileNames(string folderPath)
+        public Task<IEnumerable<string>> ListFilesAsync(string folderPath)
         {
-            var files = GetFiles(folderPath);
+            if (!Directory.Exists(folderPath)) return Task.FromResult(Enumerable.Empty<string>());
+            var files = Directory.GetFiles(folderPath);
+            return Task.FromResult((IEnumerable<string>)files);
+        }
 
-            if (files != null && files.Any())
-            {
-                return files.Select(Path.GetFileName)!;
-            }
-
-            return Enumerable.Empty<string>();
+        public Task<IEnumerable<string>> ListFileNames(string folderPath)
+        {
+            if (!Directory.Exists(folderPath)) return Task.FromResult(Enumerable.Empty<string>());
+            var files = Directory.GetFiles(folderPath).Select(Path.GetFileName);
+            return Task.FromResult((IEnumerable<string>)files);
         }
 
         public async Task<bool> DeleteFileIfExistsAsync(string folderPath, string fileName)

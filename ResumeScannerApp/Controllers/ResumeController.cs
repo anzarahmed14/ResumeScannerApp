@@ -324,9 +324,9 @@ namespace ResumeScannerApp.Controllers
         }
 
         [HttpGet("files")]
-        public ActionResult GetFiles()
+        public async Task<ActionResult> GetFiles()
         {
-            var results = _storage.ListFileNames(_resumeFolder);
+            var results = await _storage.ListFilesAsync(_resumeFolder);
             return Ok(results);
         }
 
