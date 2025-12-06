@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using ResumeScannerApp.Config;
 using ResumeScannerApp.Interfaces;
 using ResumeScannerApp.Models;
@@ -344,5 +345,28 @@ namespace ResumeScannerApp.Controllers
                 message = "File deleted successfully."
             });
         }
+
+        [HttpGet("download/{fileName}")]
+        public IActionResult Download(string fileName)
+        {
+            fileName = Path.GetFileName(fileName);   // SECURITY: prevent path traversal
+
+            var filePath = Path.Combine(_resumeFolder, fileName);
+
+            if (!System.IO.File.Exists(filePath))
+                return NotFound("File not found.");
+
+            var provider = new FileExtensionContentTypeProvider();
+
+            if (!provider.TryGetContentType(filePath, out string? contentType))
+            {
+                contentType = "application/octet-stream"; // fallback
+            }
+
+            var bytes = System.IO.File.ReadAllBytes(filePath);
+
+            return File(bytes, contentType, fileName);
+        }
+
     }
 }
