@@ -324,14 +324,11 @@ namespace ResumeScannerApp.Controllers
         }
 
         [HttpGet("files")]
-        public async Task<ActionResult> GetFiles()
+        public ActionResult GetFiles()
         {
-            //await _storage.SaveFileAsync(_resumeFolder, file.FileName, file.OpenReadStream(), cancellationToken);
-
-            var results = await _storage.ListFilesAsync(_resumeFolder);
+            var results = _storage.ListFileNames(_resumeFolder);
             return Ok(results);
         }
-
 
         [HttpDelete("{fileName}")]
         public async Task<IActionResult> Delete(string fileName)
