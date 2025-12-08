@@ -117,7 +117,7 @@ namespace ResumeScannerApp.Controllers
                     p.Success,
                     Score = score,
                     Explanation = explanation,
-                    Resume = p.Resume
+                    p.Resume
                 });
             }
 
